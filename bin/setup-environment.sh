@@ -46,21 +46,12 @@ function print_time {
   printf "${color_magenta}[TIME] ${now}${color_reset}\n"
 }
 
-# Check required packages
- 
-for key in curl unzip
-do
-  if ! command -v $key >/dev/null; then
-    terminate_with_error "${key} is not found, tryint to install it first"
-  fi
-done
-
 # Check docker
 print_info "Checking docker.."
 if ! command -v docker >/dev/null; then
   print_info "Installing docker.."
   curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-  sh /tmp/get-docker.sh
+  sudo sh /tmp/get-docker.sh
 else
   print_success "Docker found"
 fi
