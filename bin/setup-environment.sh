@@ -52,6 +52,8 @@ if ! command -v docker >/dev/null; then
   print_info "Installing docker.."
   curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
   sudo sh /tmp/get-docker.sh
+  sudo usermod -aG docker $USER
+  newgrp docker  # log in to a new group for current session
 else
   print_success "Docker found"
 fi
