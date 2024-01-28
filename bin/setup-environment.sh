@@ -47,10 +47,11 @@ function print_time {
 }
 
 # Check required packages
+ 
 for key in curl unzip
 do
   if ! command -v $key >/dev/null; then
-    terminate_with_error "${key} is not found, please install it first"
+    terminate_with_error "${key} is not found, tryint to install it first"
   fi
 done
 
@@ -103,11 +104,20 @@ fi
 # Check terraform
 print_info "Checking terraform.."
 if ! command -v terraform >/dev/null; then
-  print_warning "Terraform not found, installing"
-  curl -L -o /tmp/terraform_1.7.1_linux_amd64.zip https://releases.hashicorp.com/terraform/1.7.1/terraform_1.7.1_linux_amd64.zip
-  terraform_1.7.1_linux_amd64.zip
+  print_warning "Terraform is not found, installing"
 
-  
+  if ! lsb_release -si | grep -q -e Ubuntus -e Debian ; then
+    sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    sudo apt-get update && sudo apt-get install terraform
+    print_success "Terraform installed"
+  elif ! lsb_release -si | grep -q -e CentOS ; then
+    sudo yum install -y yum-utils
+    sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+    sudo yum -y install terraform
+    print_success "Terraform installed"
+  fi
 else
   print_success "terraform found"
 fi
