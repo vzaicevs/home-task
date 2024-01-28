@@ -52,11 +52,17 @@ if ! command -v docker >/dev/null; then
   print_info "Installing docker.."
   curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
   sudo sh /tmp/get-docker.sh
+  sudo systemctl enable docker --now
   sudo usermod -aG docker $USER
   newgrp docker  # log in to a new group for current session
 else
   print_success "Docker found"
 fi
+
+if ! docker ps >/dev/null; then
+  terminate_with_error "Docker is not available or access denied"
+fi
+
 
 # Check minikube
 print_info "Checking minikube.."
@@ -105,7 +111,7 @@ if ! command -v terraform >/dev/null; then
     sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt-get update && sudo apt-get install terraform
     print_success "Terraform installed"
-  elif ! lsb_release -si | grep -q -e CentOS ; then
+  elif ! command -v yum ; then
     sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
     sudo yum -y install terraform
@@ -114,3 +120,5 @@ if ! command -v terraform >/dev/null; then
 else
   print_success "terraform found"
 fi
+
+print_success "environment is ready, please run ./deploy-sonarqube.sh"
