@@ -74,7 +74,7 @@ else
   print_success "minikube found"
 fi
 
-if ! newgrp docker; minikube status >/dev/null; then
+if ! minikube status >/dev/null; then
   print_warning "Minikube is not started, starting.."
   minikube start
   if [ $? -ne 0 ]; then
@@ -108,8 +108,8 @@ if ! command -v terraform >/dev/null; then
   if command -v apt ; then
     sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-    sudo apt-get update && sudo apt-get install terraform
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" -y
+    sudo apt-get update && sudo apt-get -y install terraform
     print_success "Terraform installed"
   elif command -v yum ; then
     sudo yum install -y yum-utils
