@@ -54,12 +54,12 @@ if ! command -v docker >/dev/null; then
   sudo sh /tmp/get-docker.sh
   sudo systemctl enable docker --now
   sudo usermod -aG docker $USER
-  exec newgrp docker  # log in to a new group for current session
 else
   print_success "Docker found"
 fi
 
-if ! docker ps >/dev/null; then
+if ! docker ps ; then
+  print_warning "User have been added to the docker group. Please logoff and login to reload groups and run the script again"
   terminate_with_error "Docker is not available or access denied"
 fi
 
@@ -74,7 +74,7 @@ else
   print_success "minikube found"
 fi
 
-if ! minikube status >/dev/null; then
+if ! newgrp docker; minikube status >/dev/null; then
   print_warning "Minikube is not started, starting.."
   minikube start
   if [ $? -ne 0 ]; then
