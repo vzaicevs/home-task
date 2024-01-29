@@ -54,7 +54,7 @@ if ! command -v docker >/dev/null; then
   sudo sh /tmp/get-docker.sh
   sudo systemctl enable docker --now
   sudo usermod -aG docker $USER
-  newgrp docker  # log in to a new group for current session
+  exec newgrp docker  # log in to a new group for current session
 else
   print_success "Docker found"
 fi
